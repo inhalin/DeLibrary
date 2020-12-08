@@ -25,13 +25,13 @@
 
 <body class="d-flex flex-column">
 	<div id="page-content">
-		<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light p-0">
-			<div class="container">
-				<a href="Home.do" class="navbar-brand"><img alt="딜리브러리" src="img/logo_sm.png" height="20" class="pl-3 mb-1"></a>
-				<button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse noto-serif" id="navbarCollapse">
+	<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light p-0">
+		<div class="container">
+			<a href="Home.do" class="navbar-brand"><img alt="딜리브러리" src="img/logo_sm.png" height="20" class="pl-3 mb-1"></a>
+			<button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse noto-serif" id="navbarCollapse">
 				<ul class="navbar-nav ml-4">
 					<li class="nav-item dropdown">
 						<a href="howtoInfo.do" class="nav-link dropdown-toggle" data-toggle="dropdown">도서관소개</a>
@@ -46,63 +46,72 @@
 					<li class="nav-item dropdown">
 						<a href="SearchResult.do" class="nav-link dropdown-toggle" data-toggle="dropdown">도서정보</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="SearchResult.do">도서 검색</a></li>
-								<li><a class="dropdown-item" href="#">사서추천도서</a></li>
-								<li><a class="dropdown-item" href="#">신착도서</a></li>
-								<li><a class="dropdown-item" href="#">이달의 인기도서</a></li>
+								<li><a class="dropdown-item" href="SearchResult.do">도서검색</a></li>
+								<li><a class="dropdown-item" href="recommendedBooks.do">사서추천도서</a></li>
+								<li><a class="dropdown-item" href="Newbooks.do">신착도서</a></li>
+								<li><a class="dropdown-item" href="popularBook.do">인기도서</a></li>
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
-						<a href="postList.do?group=20" class="nav-link dropdown-toggle" data-toggle="dropdown">커뮤니티</a>
+						<a href="postList.do?option=p_title&search=&group=20" class="nav-link dropdown-toggle" data-toggle="dropdown">커뮤니티</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="postList.do?group=20">창작물게시판</a></li>
-								<li><a class="dropdown-item" href="postList.do?group=30">중고장터</a></li>
-								<li><a class="dropdown-item" href="#">자유게시판</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=20">창작물게시판</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=30">중고장터</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=60">자유게시판</a></li>
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
 						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown">나의도서</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
 								<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-								<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
-								<li><a class="dropdown-item" href="#">내서재</a></li>
-								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no}">개인정보수정</a></li>
+								<li><a class="dropdown-item" href="borrowList.do">대출현황</a></li>
+								<li><a class="dropdown-item" href="return_borrowList.do">대출/반납이력</a></li>
+								<li><a class="dropdown-item" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
+								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 							</ul>
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
-	               <c:if test="${empty cust_no }">
-	                  <li class="nav-item" v-bind:title="login">
-	                     <a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
-	                  </li>
-	                  <li class="nav-item" v-bind:title="signup">
-	                     <a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
-	                  </li>
-	               </c:if>
-	               <c:if test="${not empty cust_no }">
-	                  <li class="nav-item p-1"><small class="text-light">${cust_name} 님</small></li>
-	                  <li class="nav-item" v-bind:title="logout">
-	                     <a href="logout.do?cust_no=${cust_no }" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
-	                  </li>
-	               </c:if>
-	               <li class="nav-item" v-bind:title="bookcart">
-	                  <a href="#" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
-	               </li>
-	               <li class="nav-item" v-bind:title="sitemap">
-	                  <a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
-	               </li>
-	               <script>
-	                  var app = new Vue({
-	                     el: '#app',   
-	                     data: {
-	                        login: '로그인',
-	                        signup: '회원가입',
-	                        bookcart: '북카트',
-	                        sitemap: '사이트맵',
-	                        logout: '로그아웃'
-	                     }});
-	               </script>
-	            </ul>
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
+					<c:if test="${cust_no == null}">
+						<li class="nav-item" v-bind:title="login">
+							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
+						</li>
+						<li class="nav-item" v-bind:title="signup">
+							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != null}">
+						<li class="nav-item" v-bind:title="logout">
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
+						</li>
+					</c:if>
+					<li class="nav-item" v-bind:title="bookcart">
+						<a href="BookCart.do" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
+					</li>
+					<li class="nav-item" v-bind:title="sitemap">
+						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
+					</li>
+					<script>
+						var app = new Vue({
+							el: '#app',	
+							data: {
+								login: '로그인',
+								signup: '회원가입',
+								bookcart: '북카트',
+								sitemap: '사이트맵',
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
+							}});
+					</script>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -128,7 +137,7 @@
 			<div class="col-md-3">
 			  <div class="sidebar noto-serif">
 					<div class="side-head">
-						<h4 class="text-light">도서관소개</h4>
+						<h4 class="text-light text-center">도서관소개</h4>
 					</div>
 					<ul class="list-group list-group-flush mb-5">
 						<li class="list-group-item"><a href="howtoInfo.do">대출/반납/연장</a></li>
@@ -237,7 +246,7 @@
 		window.onload=function(){
 			//푸터 명언
 			const footer_display = document.getElementById('footer-display');
-			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이 제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
+			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
 			const footer_getQuote = Math.floor(Math.random() * footer_quotes.length);
 			footer_display.textContent =footer_quotes[footer_getQuote];
 		}

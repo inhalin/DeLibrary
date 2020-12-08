@@ -18,6 +18,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Noto+Serif+KR:wght@200;300&display=swap" rel="stylesheet">
 	<!-- 구글폰트 전체 기본적용 END -->
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/BookCart.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <title>북카트 - 딜리브러리</title>
@@ -135,7 +136,15 @@
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
-					<c:if test="${empty cust_no }">
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
+					<c:if test="${cust_no == null}">
 						<li class="nav-item" v-bind:title="login">
 							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
 						</li>
@@ -143,10 +152,9 @@
 							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
 						</li>
 					</c:if>
-					<c:if test="${not empty cust_no }">
-						<li class="nav-item p-1"><small class="text-light">${custName} 님</small></li>
+					<c:if test="${cust_no != null}">
 						<li class="nav-item" v-bind:title="logout">
-							<a href="logout.do?cust_no=${cust_no }" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
 						</li>
 					</c:if>
 					<li class="nav-item" v-bind:title="bookcart">
@@ -163,7 +171,8 @@
 								signup: '회원가입',
 								bookcart: '북카트',
 								sitemap: '사이트맵',
-								logout: '로그아웃'
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
 							}});
 					</script>
 				</ul>
@@ -188,36 +197,43 @@
 
   <!-- MAIN SECTION -->
 
-	<section id="contact" class="py-3">
-	<div class="cards">
-	<c:forEach var="b" items="${b }"> 
+		<section id="contact" class="py-3">
+			<div class="cards">
+			<c:if test="${empty b }">
+				<h3> 북카트에 담긴 도서가 없습니다.</h3><br>
+				<h5><a href="popularBook.do"> 인기도서 페이지 목록으로 이동</a></h5><br>
+			</c:if>
+		
+			<c:if test="${not empty b }">	
+				<c:forEach var="b" items="${b }"> 
 
-  	<div class="card">
-    <div class="card__image-holder">
-      <img class="card__image" src="${b.b_image }" alt="wave" />
-    </div>
-    <div class="card-title">
-     
-      <h2>
-      	<small>${b.b_title } </small> 
-      </h2>
-    </div>
-    <div class="card-flap flap1">
-      <div class="card-description">
-      <!--  ${b.b_title }--> 
-      <hr>
-        ${b.b_writer }
-      </div>
-      <div class="card-flap flap2">
-        <div class="card-actions">
-        </div>
-      </div>
-    </div>
-  </div>
-  </c:forEach>
-  </div>
+  			<div class="card">
+		    <div class="card__image-holder">
+		      <img class="card__image" src="${b.b_image }" alt="wave" />
+		    </div>
+		    <div class="card-title">
+		     
+		      <h2>
+		      	<small>${b.b_title } </small> 
+		      </h2>
+		    </div>
+		    <div class="card-flap flap1">
+		      <div class="card-description">
+		      <!--  ${b.b_title }--> 
+		      <hr>
+		        ${b.b_writer }
+		      </div>
+		      <div class="card-flap flap2">
+		        <div class="card-actions">
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		  </c:forEach>
+		  </c:if>
+		  </div>
 	</section>
-	</div>
+  </div>
   <!-- FOOTER -->
   <footer id="main-footer" class="text-center p-4 noto-serif">
     <div class="container">
@@ -246,7 +262,7 @@
 		window.onload=function(){
 			//푸터 명언
 			const footer_display = document.getElementById('footer-display');
-			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이 제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
+			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
 			const footer_getQuote = Math.floor(Math.random() * footer_quotes.length);
 			footer_display.textContent =footer_quotes[footer_getQuote];
 		}

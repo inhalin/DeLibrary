@@ -22,6 +22,25 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/yurim.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	 <script type="text/javascript">
+	  <!-- 미로그인시 글쓰기 버튼 누르면 로그인페이지로 이동 -->
+	  $(function(){
+	  	$(".mypage").click(function(event){
+	  		if(${cust_no == null}){
+	  			event.preventDefault();
+	  			const loginOk = confirm("로그인 후 사용 가능합니다. 로그인하시겠습니까?");
+	  			console.log(loginOk);
+	  			if(loginOk){
+	  				console.log("로그인하러갑니다.");
+	  				window.location.href = "LoginPage.do";
+	  			}
+	  		}else{
+	  			window.location.href="Home.do";
+	  		}
+	  	});
+	  });
+	  </script>
   <title>로그인 - 딜리브러리</title>
 </head>
 
@@ -63,12 +82,13 @@
 								</ul>
 						</li>
 						<li class="nav-item dropdown">
-							<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown">나의도서</a>
+							<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle mypage" data-toggle="dropdown">나의도서</a>
 								<ul class="dropdown-menu dropdown-menu-left fade-down">
-									<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-									<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
-									<li><a class="dropdown-item" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
-									<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
+									<li><a class="dropdown-item mypage" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
+									<li><a class="dropdown-item mypage" href="borrowList.do">대출현황</a></li>
+									<li><a class="dropdown-item mypage" href="return_borrowList.do">대출/반납이력</a></li>
+									<li><a class="dropdown-item mypage" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
+									<li><a class="dropdown-item mypage" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 								</ul>
 						</li>
 					</ul>
@@ -77,6 +97,9 @@
 						<li class="nav-item" v-bind:title="mamagerpage">
 							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
 						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
 					</c:if>
 					<c:if test="${cust_no == null}">
 						<li class="nav-item" v-bind:title="login">
@@ -92,7 +115,7 @@
 						</li>
 					</c:if>
 					<li class="nav-item" v-bind:title="bookcart">
-						<a href="sitemap.html" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
+						<a href="BookCart.do" class="nav-link mypage"><i class="fas fa-book mypage"></i></a><p class="sr-only">북카트</p>
 					</li>
 					<li class="nav-item" v-bind:title="sitemap">
 						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>

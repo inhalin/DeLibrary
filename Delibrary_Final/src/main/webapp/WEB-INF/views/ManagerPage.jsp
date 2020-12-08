@@ -22,6 +22,7 @@
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 <!-- 외부 CSS, JS 파일 링크 -->
 <link rel="stylesheet" href="css/HomeCSS.css">
@@ -165,20 +166,24 @@
 		display: none;
 	}
 	
+	label {
+		cursor: pointer;
+	}	
 </style>
 
 </head>
-<body>
+<body class="d-flex flex-column">
+	<div id="page-content">
 	<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light p-0">
-		<div class="container container-fluid">
-			<a href="Home.do" class="navbar-brand"><img alt="딜리브러리" src="img/logo_bg_dark2.jpg" height="40"></a>
+		<div class="container">
+			<a href="Home.do" class="navbar-brand"><img alt="딜리브러리" src="img/home/logo_home.png" height="35" class="pl-3 mb-1"></a>
 			<button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse" id="navbarCollapse">
-				<ul class="navbar-nav ml-0">
+			<div class="collapse navbar-collapse noto-serif" id="navbarCollapse">
+				<ul class="navbar-nav ml-4">
 					<li class="nav-item dropdown">
-						<a href="howtoInfo.do" class="nav-link dropdown-toggle" data-toggle="dropdown"><b>도서관소개</b></a>
+						<a href="howtoInfo.do" class="nav-link dropdown-toggle" data-toggle="dropdown">도서관소개</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
 								<li><a class="dropdown-item" href="howtoInfo.do"> 대출/반납/연장</a></li>
 								<li><a class="dropdown-item" href="postList.do?group=10"> 공지사항 </a></li>
@@ -188,63 +193,84 @@
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
-						<a href="SearchResult.do" class="nav-link dropdown-toggle" data-toggle="dropdown"><b>도서정보</b></a>
+						<a href="SearchResult.do" class="nav-link dropdown-toggle" data-toggle="dropdown">도서정보</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="SearchResult.do">도서 검색</a></li>
-								<li><a class="dropdown-item" href="#">사서추천도서</a></li>
-								<li><a class="dropdown-item" href="#">신착도서</a></li>
-								<li><a class="dropdown-item" href="#">이달의 인기도서</a></li>
+								<li><a class="dropdown-item" href="SearchResult.do">도서검색</a></li>
+								<li><a class="dropdown-item" href="recommendedBooks.do">사서추천도서</a></li>
+								<li><a class="dropdown-item" href="Newbooks.do">신착도서</a></li>
+								<li><a class="dropdown-item" href="popularBook.do">인기도서</a></li>
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
-						<a href="postList.do?group=20" class="nav-link dropdown-toggle" data-toggle="dropdown"><b>커뮤니티</b></a>
+						<a href="postList.do?option=p_title&search=&group=20" class="nav-link dropdown-toggle" data-toggle="dropdown">커뮤니티</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="postList.do?group=20">창작물게시판</a></li>
-								<li><a class="dropdown-item" href="postList.do?group=30">중고장터</a></li>
-								<li><a class="dropdown-item" href="#">자유게시판</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=20">창작물게시판</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=30">중고장터</a></li>
+								<li><a class="dropdown-item" href="postList.do?option=p_title&search=&group=60">자유게시판</a></li>
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
-						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown"><b>나의도서</b></a>
+						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle mypage" data-toggle="dropdown">나의도서</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-								<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
-								<li><a class="dropdown-item" href="#">내서재</a></li>
-								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no}">개인정보수정</a></li>
+								<li><a class="dropdown-item mypage" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
+								<li><a class="dropdown-item mypage" href="borrowList.do">대출현황</a></li>
+								<li><a class="dropdown-item mypage" href="return_borrowList.do">대출/반납이력</a></li>
+								<li><a class="dropdown-item mypage" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
+								<li><a class="dropdown-item mypage" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 							</ul>
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
 					<c:if test="${cust_no == null}">
 						<li class="nav-item" v-bind:title="login">
-							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a>
+							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
 						</li>
 						<li class="nav-item" v-bind:title="signup">
-							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a>
+							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
 						</li>
 					</c:if>
 					<c:if test="${cust_no != null}">
 						<li class="nav-item" v-bind:title="logout">
-							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a>
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
 						</li>
 					</c:if>
 					<li class="nav-item" v-bind:title="bookcart">
-						<a href="sitemap.html" class="nav-link"><i class="fas fa-book"></i></a>
+						<a href="BookCart.do" class="nav-link mypage"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
 					</li>
 					<li class="nav-item" v-bind:title="sitemap">
-						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a>
+						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
 					</li>
+					<script>
+						var app = new Vue({
+							el: '#app',	
+							data: {
+								login: '로그인',
+								signup: '회원가입',
+								bookcart: '북카트',
+								sitemap: '사이트맵',
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
+							}});
+					</script>
 				</ul>
 			</div>
 		</div>
 	</nav>
 	
   	<!-- MANAGERPAGE CONTENTS -->
-	<div id="tabs">
-		<label for="cust">회원관리</label>
-		<label for="book">도서관리</label>
-		<label for="post">게시글관리</label>
-		<label for="borrow">대여정보관리</label>
+	<div id="tabs" style="font-weight: bold;" class="py-3">
+		<label for="cust">회원관리</label>&nbsp;&nbsp;&nbsp;
+		<label for="book">도서관리</label>&nbsp;&nbsp;&nbsp;
+		<label for="post">게시글관리</label>&nbsp;&nbsp;&nbsp;
+		<label for="borrow">대여정보관리</label>&nbsp;&nbsp;&nbsp;
 	
 		<input type="radio" name="tab" class="radios" id="cust" checked="checked">
 		<input type="radio" name="tab" class="radios" id="book">
@@ -252,8 +278,9 @@
 		<input type="radio" name="tab" class="radios" id="borrow">
 	</div>
 
-	<div class="manage-area">
+	<div class="manage-area text-center">
 		회원번호 : <input type="text" class="update-input" name="cust_no">
+		회원명 : <input type="text" class="update-input" name="name">
 		관리자구분 : <input type="text" class="update-input" name="manager">
 		<button class="update-ok">수정확인</button>
 		<button class="delete-ok">삭제확인</button>
@@ -261,12 +288,14 @@
 			<table class="manage-table">
 				<tr>
 					<th>회원번호</th>
+					<th>회원명</th>
 					<th>관리자구분</th>
 					<th>작업</th>
 				</tr>
 				<c:forEach items="${clist}" var="c">
 					<tr>
 						<td>${c.cust_no }</td>
+						<td>${c.name }</td>
 						<td>${c.manager }</td>
 						<td>
 							<button type="button" class="update-btn">수정</button>
@@ -278,8 +307,9 @@
 		</div>
 	</div>
 		
-	<div class="manage-area">
-		도서번호 : <input type="text" value="22" class="update-input" name="b_no">
+	<div class="manage-area text-center">
+		도서번호 : <input type="text" value="22" class="update-input" name="b_no" readonly="readonly">
+		도서명 : <input type="text" value="22" class="update-input" name="b_title" readonly="readonly">
 		재고 : <input type="text" value="22" class="update-input" name="b_count">
 		카테고리 번호 : <input type="text" value="22" class="update-input" name="c_no">
 		<button class="update-ok">수정확인</button>
@@ -288,6 +318,7 @@
 			<table class="manage-table">
 				<tr>
 					<th>도서번호</th>
+					<th>도서명</th>
 					<th>재고</th>
 					<th>카테고리 번호</th>
 					<th>작업</th>
@@ -295,6 +326,7 @@
 				<c:forEach items="${blist}" var="b">
 					<tr>
 						<td>${b.b_no }</td>
+						<td class="text-left">${b.b_title }</td>
 						<td>${b.b_count }</td>
 						<td>${b.c_no }</td>
 						<td>
@@ -307,7 +339,7 @@
 		</div>
 	</div>
 		
-	<div class="manage-area">
+	<div class="manage-area text-center">
 		게시글ID : <input type="text" value="33" class="update-input" name="p_id">
 		게시글번호 : <input type="text" value="33" class="update-input" name="p_no">
 		회원번호 : <input type="text" value="33" class="update-input" name="cust_no">
@@ -336,15 +368,22 @@
 		</div>
 	</div>
 		
-	<div class="manage-area">
-		대여번호 : <input type="text" value="44" class="update-input" name="bor_no">
-		대여일 : <input type="text" value="44" class="update-input" name="bor_date">
-		반납일 : <input type="text" value="44" class="update-input" name="return_date">
-		반납여부 : <input type="text" value="44" class="update-input" name="return_ok">
-		대여회원번호 : <input type="text" value="44" class="update-input" name="cust_no">
-		책번호 : <input type="text" value="44" class="update-input" name="b_no">
+	<div class="manage-area text-center">
+		대여번호 : <input type="text" class="update-input" name="bor_no">
+		대여일 : <input type="date" class="update-input" name="bor_date">
+		반납일 : <input type="date" class="update-input" name="return_date">
+		반납여부 : <select style="width: 100px;" class="update-input" name="return_ok">
+					<option value="Y">Y</option>
+					<option value="N">N</option>
+					<option value="P">P</option>
+				</select>
+		대여회원번호 : <input type="text" class="update-input" name="cust_no">
+		회원명 : <input type="text" class="update-input" name="name" readonly="readonly">
+		책번호 : <input type="text" class="update-input" name="b_no">
+		<br><br>
 		<button class="update-ok">수정확인</button>
 		<button class="delete-ok">삭제확인</button>
+		<br><br>
 		<div class="table-wrapper">
 			<table class="manage-table">
 				<tr>
@@ -353,8 +392,10 @@
 					<th>반납일</th>
 					<th>반납여부</th>
 					<th>대여회원번호</th>
+					<th>회원명</th>
 					<th>책번호</th>
 					<th>작업</th>
+					<th>상태</th>
 				</tr>
 				<c:forEach items="${bo_list}" var="bo">
 					<tr>
@@ -363,11 +404,24 @@
 						<td>${bo.return_date }</td>
 						<td>${bo.return_ok }</td>
 						<td>${bo.cust_no }</td>
+						<td>${bo.name }</td>
 						<td>${bo.b_no }</td>
 						<td>
 							<button type="button" class="update-btn">수정</button>
 							<button type="button" class="delete-btn">삭제</button>
 						</td>
+						<c:if test="${bo.return_ok=='Y' }">
+							<td class="text-success" style="font-weight: bold;">반납 완료</td>
+						</c:if>
+						<c:if test="${bo.return_ok=='N' }">
+							<td class="text-warning" style="font-weight: bold;">대여 중</td>
+						</c:if>
+						<c:if test="${bo.return_ok eq 'P' }">
+							<td class="text-danger" style="font-weight: bold;">반납 대기</td>
+						</c:if>
+						<c:if test="${bo.return_ok != 'P' && bo.return_ok != 'Y' && bo.return_ok != 'N' }">
+							<td class="text-danger" style="font-weight: bold;">&nbsp;</td>
+						</c:if>
 					</tr>
 				</c:forEach>
 			</table>

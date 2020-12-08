@@ -216,45 +216,54 @@ function sample6_execDaumPostcode() {
 						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown">나의도서</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
 								<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-								<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
+								<li><a class="dropdown-item" href="borrowList.do">대출현황</a></li>
+								<li><a class="dropdown-item" href="return_borrowList.do">대출/반납이력</a></li>
 								<li><a class="dropdown-item" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
 								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 							</ul>
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
-	               <c:if test="${empty cust_no }">
-	                  <li class="nav-item" v-bind:title="login">
-	                     <a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
-	                  </li>
-	                  <li class="nav-item" v-bind:title="signup">
-	                     <a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
-	                  </li>
-	               </c:if>
-	               <c:if test="${not empty cust_no }">
-	                  <li class="nav-item p-1"><small class="text-light">${cust_name} 님</small></li>
-	                  <li class="nav-item" v-bind:title="logout">
-	                     <a href="logout.do?cust_no=${cust_no }" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
-	                  </li>
-	               </c:if>
-	               <li class="nav-item" v-bind:title="bookcart">
-	                  <a href="#" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
-	               </li>
-	               <li class="nav-item" v-bind:title="sitemap">
-	                  <a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
-	               </li>
-	               <script type="text/javascript">
-	               var app = new Vue({
-	                     el: '#app',   
-	                     data: {
-	                        login: '로그인',
-	                        signup: '회원가입',
-	                        bookcart: '북카트',
-	                        sitemap: '사이트맵',
-	                        logout: '로그아웃'
-	                     }});
-	               </script>
-	            </ul>
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
+					<c:if test="${cust_no == null}">
+						<li class="nav-item" v-bind:title="login">
+							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
+						</li>
+						<li class="nav-item" v-bind:title="signup">
+							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != null}">
+						<li class="nav-item" v-bind:title="logout">
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
+						</li>
+					</c:if>
+					<li class="nav-item" v-bind:title="bookcart">
+						<a href="BookCart.do" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
+					</li>
+					<li class="nav-item" v-bind:title="sitemap">
+						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
+					</li>
+					<script>
+						var app = new Vue({
+							el: '#app',	
+							data: {
+								login: '로그인',
+								signup: '회원가입',
+								bookcart: '북카트',
+								sitemap: '사이트맵',
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
+							}});
+					</script>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -284,7 +293,8 @@ function sample6_execDaumPostcode() {
 						</div>
 						<ul class="list-group list-group-flush mb-5">
 							<li class="list-group-item"><a href="mypage_main.do?cust_no=${cust_no }">나의도서정보</a></li>
-							<li class="list-group-item"><a href="#">대출현황/이력</a></li>
+							<li class="list-group-item"><a href="borrowList.do">대출현황</a></li>
+							<li class="list-group-item"><a href="return_borrowList.do">대출/반납이력</a></li>
 							<li class="list-group-item"><a href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
 							<li class="list-group-item active"><a href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 						</ul>
@@ -427,55 +437,55 @@ function sample6_execDaumPostcode() {
 							<div class="form-group mt-4" style="text-align: center;">
 							<b><label class="mb-1" style="text-align: left;">도서 관심장르를 모두 선택해주세요.</label></b><br>
 								<c:set var="interest" value="${c.interest }"/>
-				            <c:if test="${fn:contains(interest, '인문')}">
+				            <c:if test="${fn:contains(interest, '1')}">
 				                  <input type="checkbox" name="genre" value="1" CHECKED="checked">인문
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${!fn:contains(interest, '인문')}">
+				            <c:if test="${!fn:contains(interest, '1')}">
 				                  <input type="checkbox" name="genre" value="1">인문
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${fn:contains(interest, '경영')}">
+				            <c:if test="${fn:contains(interest, '2')}">
 				               <input type="checkbox" name="genre" value="2" CHECKED="checked">경영       
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${!fn:contains(interest, '경영')}">
+				            <c:if test="${!fn:contains(interest, '2')}">
 				               <input type="checkbox" name="genre" value="2">경영       
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${fn:contains(interest, '소설')}">
+				            <c:if test="${fn:contains(interest, '3')}">
 				               <input type="checkbox" name="genre" value="3" CHECKED="checked">소설  
 				            </c:if>   
-				            <c:if test="${!fn:contains(interest, '소설')}">
+				            <c:if test="${!fn:contains(interest, '3')}">
 				               <input type="checkbox" name="genre" value="3">소설       
 				            </c:if>   
 				               <br>
-				            <c:if test="${fn:contains(interest, '역사')}">
+				            <c:if test="${fn:contains(interest, '4')}">
 				               <input type="checkbox" name="genre" value="4" CHECKED="checked">역사 
 				            </c:if>   
-				               &nbsp;
-				            <c:if test="${fn:contains(interest, '순수과학')}">
-				               <input type="checkbox" name="genre" value="5" CHECKED="checked">순수과학
-				            </c:if>   
-				               &nbsp;
-				            <c:if test="${fn:contains(interest, '응용과학')}">
-				               <input type="checkbox" name="genre" value="6" CHECKED="checked">응용과학
-				            </c:if>   
-				            <c:if test="${!fn:contains(interest, '역사')}">
+				            <c:if test="${!fn:contains(interest, '4')}">
 				               <input type="checkbox" name="genre" value="4">역사 
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${!fn:contains(interest, '순수과학')}">
+				            <c:if test="${fn:contains(interest, '5')}">
+				               <input type="checkbox" name="genre" value="5" CHECKED="checked">순수과학
+				            </c:if>   
+				            <c:if test="${!fn:contains(interest, '5')}">
 				               <input type="checkbox" name="genre" value="5">순수과학
 				            </c:if>   
 				               &nbsp;
-				            <c:if test="${!fn:contains(interest, '응용과학')}">
+				            <c:if test="${fn:contains(interest, '6')}">
+				               <input type="checkbox" name="genre" value="6" CHECKED="checked">응용과학
+				            </c:if>   
+				            <c:if test="${!fn:contains(interest, '6')}">
 				               <input type="checkbox" name="genre" value="6">응용과학
 				            </c:if>
+				               &nbsp;
 							</div><!-- 관심장르 CHECKBOX END -->
 								</div>
 							</div>
 							<button type="submit" class="btn btn-dark btn-block mb-1 btn-Customer">수정하기</button>
+							<button type="button" class="btn btn-outline-danger btn-block mb-1 btn-Customer" data-toggle="modal" data-target="#outModal">회원탈퇴 </button>
 						</form>
 					</section>
 				</div>
@@ -483,6 +493,69 @@ function sample6_execDaumPostcode() {
 		</div>
 	</section>
 </div>
+
+<!-- 회원탈퇴 추가 by 유림 1129 -->
+ <div class="modal" id="outModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">회원탈퇴</h5>
+            <button class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="username">회원탈퇴를 위해 비밀번호를 입력해주세요.</label>
+                <input type="password" placeholder="비밀번호를 입력해주세요." class="form-control" id="pwInput">
+              </div>
+              <div class="form-group">
+                <label for="password">비밀번호를 한번 더 입력해주세요</label>
+                <input type="password" placeholder="비밀번호를 한번 더 입력해주세요." class="form-control" id="pwInputCheck">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-danger" data-dismiss="modal" id="outCustomer">회원탈퇴</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+	const pwInput = $('#pwInput').val();
+	const pwInputCheck = $('#pwInputCheck').val();
+	const email = $('#id').val() + '@' + $('#email').val();
+
+	if(pwInput != pwInputCheck) {
+		pwInput.addClass('is-invalid');
+	}
+
+	$('#outCustomer').click(function(){
+		$.ajax({
+			url:'/optOutCustomer.do',
+			type:'POST',
+			data: {
+				'email': email,
+				'pw': pwInput 
+			},success:function(result){
+				console.log(result);
+				if(result > 0){
+					alert('탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사드립니다.'); 
+					 window.location="/Home.do";
+				} else {
+					alert('탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사드립니다.');
+					window.location="/Home.do";
+				}
+			},
+		 	error: function(){
+		 		alert('탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사드립니다.');
+		 		window.location="/Home.do";
+			}
+		});	
+	});
+
+	
+  </script>
 
 	<!-- FOOTER -->
   <footer id="main-footer" class="text-center p-4 noto-serif">
@@ -509,13 +582,13 @@ function sample6_execDaumPostcode() {
 		// Get the current year for the copyright
 		$('#year').text(new Date().getFullYear());
 	
-		window.onload=function(){
+		$(function(){
 			//푸터 명언
 			const footer_display = document.getElementById('footer-display');
-			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이 제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
+			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
 			const footer_getQuote = Math.floor(Math.random() * footer_quotes.length);
 			footer_display.textContent =footer_quotes[footer_getQuote];
-		}
+		});
 	</script>
   </body>
 </html>

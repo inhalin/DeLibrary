@@ -20,6 +20,26 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/error.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	 <script type="text/javascript">
+	 
+	  <!-- 미로그인시 글쓰기 버튼 누르면 로그인페이지로 이동 -->
+	  $(function(){
+	  	$(".mypage").click(function(event){
+	  		if(${cust_no == null}){
+	  			event.preventDefault();
+	  			const loginOk = confirm("로그인 후 사용 가능합니다. 로그인하시겠습니까?");
+	  			console.log(loginOk);
+	  			if(loginOk){
+	  				console.log("로그인하러갑니다.");
+	  				window.location.href = "LoginPage.do";
+	  			}
+	  		}else{
+	  			window.location.href="Home.do";
+	  		}
+	  	});
+	  });
+	  </script>
   <title>로그인 - 딜리브러리</title>
 </head>
 
@@ -61,17 +81,25 @@
 							</ul>
 					</li>
 					<li class="nav-item dropdown">
-						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown">나의도서</a>
+						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle mypage" data-toggle="dropdown">나의도서</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
-								<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-								<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
-								<li><a class="dropdown-item" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
-								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
+								<li><a class="dropdown-item mypage" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
+								<li><a class="dropdown-item mypage" href="lentSearchResult.do">대출현황/이력</a></li>
+								<li><a class="dropdown-item mypage" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
+								<li><a class="dropdown-item mypage" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 							</ul>
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
-					<c:if test="${empty cust_no }">
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
+					<c:if test="${cust_no == null}">
 						<li class="nav-item" v-bind:title="login">
 							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
 						</li>
@@ -79,14 +107,13 @@
 							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
 						</li>
 					</c:if>
-					<c:if test="${not empty cust_no }">
-						<li class="nav-item p-1"><small class="text-light">${custName} 님</small></li>
+					<c:if test="${cust_no != null}">
 						<li class="nav-item" v-bind:title="logout">
-							<a href="logout.do?cust_no=${cust_no }" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
 						</li>
 					</c:if>
 					<li class="nav-item" v-bind:title="bookcart">
-						<a href="#" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
+						<a href="BookCart.do" class="nav-link mypage"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
 					</li>
 					<li class="nav-item" v-bind:title="sitemap">
 						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
@@ -99,7 +126,8 @@
 								signup: '회원가입',
 								bookcart: '북카트',
 								sitemap: '사이트맵',
-								logout: '로그아웃'
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
 							}});
 					</script>
 				</ul>
@@ -115,9 +143,11 @@
 				<div class="col-md-12 text-center my-5">
 	        <h5 class="noto-serif">죄송합니다. 서비스중에 문제가 발생하였습니다.</h5>
 	        <hr>
-	        <p>${msg }</p>
+	        
+	        <img alt="error" src="../img/sorry.gif" width="300">
+	      
 	      </div>
-	      <div class="col-md-6 p-5">
+	      <div class="col-md-6 p-2">
 	      	<div class="row">
 		        <div class="col">
 		          <h6>도서관소개</h6>
@@ -138,7 +168,7 @@
 		        </div>
 	        </div>
         </div>
-        <div class="col-md-6 p-5">
+        <div class="col-md-6 p-2">
 	        <div class="row">
 		        <div class="col">
 	            <h6>커뮤니티</h6>
@@ -151,7 +181,8 @@
 	            <h6>나의도서</h6>
 	            <hr>
 	            <a href="mypage_main.do?cust_no=${cust_no }"><p>나의도서정보</p></a>
-	            <a href="lentSearchResult.do"><p>대출현황/이력</p></a>
+	            <a href="borrowList.do"><p>대출현황</p></a>
+				<a href="return_borrowList.do"><p>대출/반납이력</p></a>
 	            <a href="MyPage_Folder.do?cust_no=${cust_no }&group=50"><p>내서재</p></a>
 	            <a href="MyPage_Info.do?cust_no=${cust_no }"><p>개인정보수정</p></a>
 						</div>
@@ -212,5 +243,9 @@
       </div>
     </div>
   </footer>
+  <script type="text/javascript">
+	  //Get the current year for the copyright
+	  $('#year').text(new Date().getFullYear());
+  </script>
 </body>
 </html>

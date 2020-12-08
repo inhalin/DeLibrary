@@ -19,6 +19,17 @@
 	<!-- 구글폰트 전체 기본적용 END -->
 	<link rel="stylesheet" href="css/style.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script type="text/javascript"	src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		$("#btn_b_N").click(function(){
+			window.location.href="borrowList.do";
+		});
+		$("#btn_b_ALL").click(function(){
+			window.location.href="return_borrowList.do";
+		});
+	});
+	</script>
   <title>나의도서 - 딜리브러리</title>
 </head>
 
@@ -63,45 +74,54 @@
 						<a href="mypage_main.do?cust_no=${cust_no }" class="nav-link dropdown-toggle" data-toggle="dropdown">나의도서</a>
 							<ul class="dropdown-menu dropdown-menu-left fade-down">
 								<li><a class="dropdown-item" href="mypage_main.do?cust_no=${cust_no }"> 나의도서정보</a></li>
-								<li><a class="dropdown-item" href="lentSearchResult.do">대출현황/이력</a></li>
+								<li><a class="dropdown-item" href="borrowList.do">대출현황</a></li>
+								<li><a class="dropdown-item" href="return_borrowList.do">대출/반납이력</a></li>
 								<li><a class="dropdown-item" href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
 								<li><a class="dropdown-item" href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 							</ul>
 					</li>
 				</ul>
 				<ul id="app" class="navbar-nav ml-auto">
-	               <c:if test="${empty cust_no }">
-	                  <li class="nav-item" v-bind:title="login">
-	                     <a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
-	                  </li>
-	                  <li class="nav-item" v-bind:title="signup">
-	                     <a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
-	                  </li>
-	               </c:if>
-	               <c:if test="${not empty cust_no }">
-	                  <li class="nav-item p-1"><small class="text-light">${cust_name} 님</small></li>
-	                  <li class="nav-item" v-bind:title="logout">
-	                     <a href="logout.do?cust_no=${cust_no }" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
-	                  </li>
-	               </c:if>
-	               <li class="nav-item" v-bind:title="bookcart">
-	                  <a href="#" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
-	               </li>
-	               <li class="nav-item" v-bind:title="sitemap">
-	                  <a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
-	               </li>
-	               <script>
-	                  var app = new Vue({
-	                     el: '#app',   
-	                     data: {
-	                        login: '로그인',
-	                        signup: '회원가입',
-	                        bookcart: '북카트',
-	                        sitemap: '사이트맵',
-	                        logout: '로그아웃'
-	                     }});
-	               </script>
-	            </ul>
+					<c:if test="${cust_no == 1}">
+						<li class="nav-item" v-bind:title="mamagerpage">
+							<a href="ManagerPage.do" class="nav-link"><i class="fas fa-crown" style="color: #107637;"></i></a><p class="sr-only">관리자페이지</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != 1 && cust_no != null }">
+						 <li class="nav-item p-1"><small class="text-dark">${cust_name} 님</small></li>
+					</c:if>
+					<c:if test="${cust_no == null}">
+						<li class="nav-item" v-bind:title="login">
+							<a href="LoginPage.do" class="nav-link"><i class="fas fa-sign-in-alt"></i></a><p class="sr-only">로그인</p>
+						</li>
+						<li class="nav-item" v-bind:title="signup">
+							<a href="insertCustomer.do" class="nav-link"><i class="fas fa-user-plus"></i></a><p class="sr-only">회원가입</p>
+						</li>
+					</c:if>
+					<c:if test="${cust_no != null}">
+						<li class="nav-item" v-bind:title="logout">
+							<a href="logout.do" class="nav-link"><i class="fas fa-sign-out-alt"></i></a><p class="sr-only">로그아웃</p>
+						</li>
+					</c:if>
+					<li class="nav-item" v-bind:title="bookcart">
+						<a href="BookCart.do" class="nav-link"><i class="fas fa-book"></i></a><p class="sr-only">북카트</p>
+					</li>
+					<li class="nav-item" v-bind:title="sitemap">
+						<a href="siteMap.do" class="nav-link"><i class="fas fa-map"></i></a><p class="sr-only">사이트맵</p>
+					</li>
+					<script>
+						var app = new Vue({
+							el: '#app',	
+							data: {
+								login: '로그인',
+								signup: '회원가입',
+								bookcart: '북카트',
+								sitemap: '사이트맵',
+								logout: '로그아웃',
+								mamagerpage: '관리자페이지'
+							}});
+					</script>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -131,7 +151,8 @@
 					</div>
 					<ul class="list-group list-group-flush mb-5">
 						<li class="list-group-item active"><a href="mypage_main.do?cust_no=${cust_no }">나의도서정보</a></li>
-						<li class="list-group-item"><a href="#">대출현황/이력</a></li>
+						<li class="list-group-item"><a href="borrowList.do">대출현황</a></li>
+						<li class="list-group-item"><a href="return_borrowList.do">대출/반납이력</a></li>
 						<li class="list-group-item"><a href="MyPage_Folder.do?cust_no=${cust_no }&group=50">내서재</a></li>
 						<li class="list-group-item"><a href="MyPage_Info.do?cust_no=${cust_no }">개인정보수정</a></li>
 					</ul>
@@ -152,7 +173,7 @@
                 <div class="card-body" style="padding-top: 50px; text-align: center;">
                     <h4 class="card-title">${c.nickname}</h4>
                     <p class="card-text">${id}@${email}</p>
-                    <p class="card-text">${c.interest}</p>
+                    <p class="card-text">${c.birthday}</p>
                     <p class="card-text">
                         <a href="MyPage_Info.do?cust_no=${c.cust_no }"><small class="text-muted">개인정보수정</small></a>
                     </p>
@@ -160,9 +181,9 @@
               </div>
               <div class="card">
                 <div class="card-body" style=" text-align: center;">
-                    <p class="card-text tbody py-4"><a href="#">대출현황 00건</a></p>
+                    <p class="card-text tbody py-4"><a href="borrowList.do">대출현황 ${totalCount_N }건</a></p>
                     <hr>
-                    <p class="card-text tbody py-4"><a href="#">대출/반납이력 00건</a></p>
+                    <p class="card-text tbody py-4"><a href="return_borrowList.do">대출/반납이력 ${totalCount_ALL }건</a></p>
                 </div>
               </div>
             </div>
@@ -174,7 +195,7 @@
                 <h5>대출현황</h5>
               </div>
               <div class="text-right mb-2 pr-3">
-                <button class="btn btn-outline-secondary btn-sm" onclick="lentBooks()">전체보기</button>
+                <button class="btn btn-outline-secondary btn-sm" type="button" id="btn_b_N">전체보기</button>
               </div>
             </div>
             <table class="table table-hover">
@@ -187,12 +208,19 @@
                   </tr>
               </thead>
               <tbody class="tbody">
+	                <c:if test="${totalCount_N==0 }">
+	                	<td colspan="4" style="text-align: center;">대출중인 도서가 없습니다.</td>
+	                </c:if>
+           		<c:forEach var="b_N" items="${b_N}" varStatus="status" begin="0" end="2">
                 <tr>
-                    <th scope="row" width="5%">1</th>
-                    <td width="60%"><a href="#">도서제목1</a></td>
-                    <td>0000/00/00</td>
-                    <td>0000/00/00</td>
+                    <th scope="row" width="5%">${status.count }</th>
+                   	<c:if test="${totalCount_N!=0 }">
+	                    <td width="60%">${b_N.b_title }</td>
+	                    <td>${b_N.bor_date }</td>
+	                    <td>${b_N.return_date }</td>
+                   	</c:if>
                 </tr>
+           		</c:forEach>
               </tbody>
             </table>
             <br>
@@ -203,7 +231,7 @@
                  <h5>대출/반납이력</h5>
                </div>
                <div class="text-right mb-2 pr-3">
-                 <button class="btn btn-outline-secondary btn-sm">전체보기</button>
+                 <button class="btn btn-outline-secondary btn-sm" type="button" id="btn_b_ALL">전체보기</button>
                </div>
              </div>
              <table class="table table-hover">
@@ -212,19 +240,25 @@
                    <th>&nbsp;</th>
                    <th>도서명</th>
                    <th>대출일자</th>
-                   <th>반납예정일</th>
+                   <th>반납일자</th>
                  </tr>
                </thead>
                <tbody class="tbody">
+               <c:forEach var="b_ALL" items="${b_ALL}" varStatus="status"  begin="0" end="2"> 
                  <tr>
-                   <th scope="row" width="5%">1</th>
-                     <td width="60%"><a href="#">도서제목1</a></td>
-                     <td>0000/00/00</td>
-                     <td>0000/00/00</td>
+                     <c:if test="${totalCount_ALL==0 }">
+                    	<td colspan="4" style="text-align: center;">대출/반납 이력이 없습니다.</td>
+                    </c:if>
+                   <th scope="row" width="5%">${status.count }</th>
+                   	<c:if test="${totalCount_ALL!=0 }">
+	                    <td width="60%">${b_ALL.b_title }</td>
+	                    <td>${b_ALL.bor_date }</td>
+	                    <td>${b_ALL.return_date }</td>
+                   	</c:if>
                  </tr>
+               </c:forEach>
                </tbody>
              </table>
-           
        </div>
      </div>
    </div>
@@ -256,13 +290,13 @@
 		// Get the current year for the copyright
 		$('#year').text(new Date().getFullYear());
 	
-		window.onload=function(){
+		$(function(){
 			//푸터 명언
 			const footer_display = document.getElementById('footer-display');
-			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이 제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
+			const footer_quotes = ['좋은 책은 인류에게 불멸의 정신이다. — J. 밀턴', '내가 인생을 알게 된 것은 사람과 접촉해서가 아니라 책과 접하였기 때문이다. — A. 프 랜스', '목적이 없는 독서는 산보일 뿐이다. — B. 리튼', '사람은 책을 만들고, 책은 사람을 만든다. — 신용호','기회를 기다리는 것은 바보짓이다. 독서의 시간이라는 것은 지금 이 시간이지 결코 이제부터가 아니다. 오늘 읽을 수 있는 책을 내일로 넘기지 말라. — H. 잭슨','책은 한 권 한 권이 하나의 세계다. — W. 워즈워스', '책을 한 권 읽으면 한 권의 이익이 있고, 책을 하루 읽으면 하루의 이익이 있다. — 괴문절'];
 			const footer_getQuote = Math.floor(Math.random() * footer_quotes.length);
 			footer_display.textContent =footer_quotes[footer_getQuote];
-		}
+		});
 	</script>
 </body>
 

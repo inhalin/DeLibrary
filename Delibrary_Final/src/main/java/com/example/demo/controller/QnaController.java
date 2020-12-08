@@ -28,247 +28,251 @@ import lombok.Setter;
 
 @Controller
 public class QnaController {
-	
-	public static int pageSIZE =  3;	//Ìïú ÌéòÏù¥ÏßÄÏóê Î≥¥Ïó¨Ï§Ñ Í≤åÏãúÍ∏ÄÏùò Ïàò
-	public static int pageMAX =  5;		//Ìïú ÌéòÏù¥ÏßÄÏóêÏÑú ÌéòÏù¥ÏßïÎ∞î Ïàò
-	public static int totalCount  = 0;	
-	public static int totalPage = 0;	
-	public static int updateHit = 0;
-	public static int nextId;
-	public static int nextNo;
-	
-	@Autowired
-	@Setter
-	private QnaDAO dao;
-	
-	@Autowired
-	@Setter
-	private ReplyDAO re_dao;
-	
-	@Autowired
-	@Setter
-	private CustomerDAO c_dao;
-	
-	
-		//Î™©Î°ù
-		@RequestMapping("/QnaList.do")
-		public void list(Model model, @RequestParam(value = "pageNUM", defaultValue = "1") int pageNUM, String option, String search, HttpSession session) {
-			System.out.println("***pageNUM : "+	pageNUM);
+   
+   public static int pageSIZE =  5;   //«— ∆‰¿Ã¡ˆø° ∫∏ø©¡Ÿ ∞‘Ω√±€¿« ºˆ
+   public static int pageMAX =  5;      //«— ∆‰¿Ã¡ˆø°º≠ ∆‰¿Ã¬°πŸ ºˆ
+   public static int totalCount  = 0;   
+   public static int totalPage = 0;   
+   public static int updateHit = 0;
+   public static int nextId;
+   public static int nextNo;
+   
+   @Autowired
+   @Setter
+   private QnaDAO dao;
+   
+   @Autowired
+   @Setter
+   private ReplyDAO re_dao;
+   
+   @Autowired
+   @Setter
+   private CustomerDAO c_dao;
+   
+   
+      //∏Ò∑œ
+      @RequestMapping("/QnaList.do")
+      public void list(Model model, @RequestParam(value = "pageNUM", defaultValue = "1") int pageNUM, String option, String search, HttpSession session) {
+         System.out.println("***pageNUM : "+   pageNUM);
 
-			
-			
-			System.out.println("search::::"+search);
-			System.out.println("option::::"+option);
-			
-			if( search == null && session.getAttribute("search") != null) {
-				search = (String)session.getAttribute("search");
-				option = (String)session.getAttribute("option");
-			}
-			
-			HashMap map=new HashMap();
-			
-			map.put("search", search);
-			map.put("option", option);
-			
-			totalCount = dao.getTotalCount(map);
-			totalPage = (int)Math.ceil( (double)totalCount/pageSIZE );
-			
-			//ÌéòÏù¥ÏßÄ Î≤ÑÌäº Ïà´Ïûê
-			int startPage = (pageNUM-1)/pageMAX*pageMAX+1;
-			int endPage = startPage+pageMAX-1;
-			if(endPage>totalPage) {
-				endPage = totalPage;
-			}
-			
-//			map.put("startPage", startPage);
-//			map.put("endPage", endPage);
-			
-			//ÌéòÏù¥ÏßÄÏóê Ï∂úÎ†§ÎêòÎäî Î†àÏΩîÎìúÎ≤àÌò∏
-			int start = (pageNUM-1)*pageSIZE+1;
-			int end = start + pageSIZE-1; 
-			if (end > totalCount) {
-				end = totalCount;
-			}
-			map.put("start", start);
-			map.put("end", end);
-			
-			
-			
-			System.out.println("***start : "+start);
-			System.out.println("***end : "+end);
-			System.out.println("***startPage : "+startPage);
-			System.out.println("***endPage : "+endPage);
-			System.out.println("***totalPage : "+totalPage);
-			
-		
-			
-			
-			model.addAttribute("list", dao.findAll(map));
-			model.addAttribute("totalCount", totalCount);
-			model.addAttribute("totalPage", totalPage);
-			model.addAttribute("startPage", startPage);
-			model.addAttribute("endPage", endPage);
-//			model.addAttribute("start", start);
-//			model.addAttribute("end", end);
-			model.addAttribute("pageNUM", pageNUM);
-			
-			if(search != null) {
-				session.setAttribute("search", search);
-				session.setAttribute("option", option);
-			}
-			
-			//navÎ∞îÏóê ~Îãò ÌïòÍ∏∞ÏúÑÌïú ÏΩîÎìú
-//			model.addAttribute("cust_name",c_dao.findByCust_No((int)session.getAttribute("cust_no")).getName());
-			
-		
-		}
-		
-	
-	
-		//ÏÉÅÏÑ∏Î≥¥Í∏∞ + ÎåìÍ∏Ä
-		@RequestMapping("/QnaDetail.do")
-		public void detail(HttpServletRequest request, Model model) {
-			int p_id = 0;
-			
-			if(request.getParameter("p_id")!=null) {
-				p_id = Integer.parseInt(request.getParameter("p_id"));
-			}
-			System.out.println(p_id);
-			
-			updateHit = dao.updateHit(p_id);
-			
-			HashMap map = new HashMap();
-			map.put("p_id", p_id);
-			
-			model.addAttribute("qna", dao.getQna(p_id));
-			model.addAttribute("listReply",re_dao.findAll(map));
-		
-			//Î°úÍ∑∏Ïù∏Îêú ÌöåÏõêÎ≤àÌò∏ Î∞õÏïÑÏò§Í∏∞
-			HttpSession session=request.getSession(); 
-			session.setAttribute("cust_no", session.getAttribute("cust_no"));
-		}
-	
-		
-	
-	   //ÏÉàÍ∏Ä ÏûëÏÑ±
-	   @RequestMapping(value="/QnaInsert.do", method = RequestMethod.GET)
-	   public void insertForm(Model model, String nickname, int cust_no , PostVO post) {
-		    nextId=dao.getNextId();
-			post.setP_id(nextId);
-			nextNo=dao.getNextNo();
-			post.setP_no(nextNo);
-			
-			model.addAttribute("p_id", nextId);
-			model.addAttribute("p_no", nextNo);
-			model.addAttribute("c", c_dao.findByCust_No(cust_no));
-	   }
-	   @RequestMapping(value="/QnaInsert.do", method = RequestMethod.POST)
-	   public ModelAndView insertSubmit(PostVO pvo,int cust_no, int p_id, int p_no, String p_title,String p_content, HttpServletRequest request) {
-	      
-		    String path=request.getRealPath("img");
-			System.out.println("path : "+path);
-			
-			MultipartFile uploadFile = pvo.getUploadFile();
-			String fname = uploadFile.getOriginalFilename();
-			
-			if(fname != null && !fname.equals("")) {
-				try {
-					byte[] data = uploadFile.getBytes();
-					FileOutputStream fos = new FileOutputStream(path + "/" + fname);
-					fos.write(data);
-					fos.close();
-				}catch (Exception e) {
-					System.out.println("ÏòàÏô∏Î∞úÏÉù : " + e.getMessage());
-				}
-				pvo.setFname(fname);
-	        } else{
-	        	pvo.setFname("");
-	        }
-			
-			
-			
-			String p_writer = c_dao.findByCust_No(cust_no).getNickname();
-			int p_hit=0;
-			
-			HashMap map=new HashMap();
-			map.put("p_id", p_id);
-			map.put("p_no", p_no);
-			map.put("cust_no", cust_no);
-			map.put("p_title", p_title);
-			map.put("p_writer", p_writer);
-			map.put("p_content", p_content);
-			map.put("p_hit", p_hit);
-			map.put("fname", fname);
-	      
-			ModelAndView mav = new ModelAndView("redirect:/QnaList.do?option=p_title&search=");
-			int re=dao.insert(map);	
-		     if(re<=0) {
-		        mav.addObject("msg", "Í≤åÏãúÍ∏ÄÏù¥ Ï†ïÏÉÅÏ†ÅÏúºÎ°ú Îì±Î°ùÎêòÏßÄ ÏïäÏïòÏäµÎãàÎã§.");
-		        mav.setViewName("error");
-		     }
-		     
-		     return mav;
-	   }
-	   
-	   //Í≤åÏãúÍ∏Ä ÏàòÏ†ï
-	   @RequestMapping(value="QnaUpdate.do", method = RequestMethod.GET)
-	   public void update(int p_id, int cust_no, String nickname, Model model) {
-		   HashMap map = new HashMap();
-		   map.put("p_id", p_id);
-		   map.put("cust_no", cust_no);
-		      
-		   model.addAttribute("c", c_dao.findByCust_No(cust_no));
-		   model.addAttribute("qna", dao.getQna(p_id));
-	   }
-	   @RequestMapping(value="QnaUpdate.do", method = RequestMethod.POST)
-	   public ModelAndView update(HttpServletRequest request, PostVO m, MultipartFile uploadFile) {
-		  
-		   	String path = request.getRealPath("img");
-			System.out.println("path: "+path);
-			String oldFname = m.getFname();
-			String fname = uploadFile.getOriginalFilename();
-			if(fname != null && !fname.equals("")) {
-				m.setFname(fname);
-				try {
-					byte[] data = uploadFile.getBytes();
-					FileOutputStream fos = new FileOutputStream(path + "/" + fname);
-					fos.write(data);
-					fos.close();
-				}catch (Exception e) {
-					System.out.println("ÏòàÏô∏Î∞úÏÉù updateCustomer : " + e.getMessage());
-				}
-				m.setFname(fname);
-	        } else{
-	           m.setFname(oldFname);
-	        }  
-		   
-	      ModelAndView mav=new ModelAndView("redirect:/QnaDetail.do?p_id="+m.getP_id());
-	      int re = dao.update(m);
-	      if(re<=0) {
-	         mav.addObject("msg", "Í≤åÏãúÍ∏ÄÏù¥ Ï†ïÏÉÅÏ†ÅÏúºÎ°ú ÏàòÏ†ïÎêòÏßÄ ÏïäÏïòÏäµÎãàÎã§.");
-	         mav.setViewName("error");
-	      }else {
-				if(fname != null && !fname.equals("") && !m.getFname().equals("")) {
-					File file = new File(path + "/" + oldFname);
-													// oldFnameÏúºÎ°ú Î≥ÄÍ≤Ω
-					file.delete();
-				}
-	  	  }
-	      return mav;
-	   }	   
-	   
-	    //Í≤åÏãúÍ∏Ä ÏÇ≠Ï†ú
-	    @RequestMapping(value = "QnaDelete.do", method = RequestMethod.POST)
-		@ResponseBody
-		public int delete(int p_id, int cust_no, HttpServletRequest request) {
-			int re=-1;
+         
+         
+         System.out.println("search::::"+search);
+         System.out.println("option::::"+option);
+         
+         if( search == null && session.getAttribute("search") != null) {
+            search = (String)session.getAttribute("search");
+            option = (String)session.getAttribute("option");
+         }
+         
+         HashMap map=new HashMap();
+         
+         map.put("search", search);
+         map.put("option", option);
+         
+         totalCount = dao.getTotalCount(map);
+         totalPage = (int)Math.ceil( (double)totalCount/pageSIZE );
+         
+         //∆‰¿Ã¡ˆ πˆ∆∞ º˝¿⁄
+         int startPage = (pageNUM-1)/pageMAX*pageMAX+1;
+         int endPage = startPage+pageMAX-1;
+         if(endPage>totalPage) {
+            endPage = totalPage;
+         }
+         
+//         map.put("startPage", startPage);
+//         map.put("endPage", endPage);
+         
+         //∆‰¿Ã¡ˆø° √‚∑¡µ«¥¬ ∑πƒ⁄µÂπ¯»£
+         int start = (pageNUM-1)*pageSIZE+1;
+         int end = start + pageSIZE-1; 
+         if (end > totalCount) {
+            end = totalCount;
+         }
+         map.put("start", start);
+         map.put("end", end);
+         
+         
+         
+         System.out.println("***start : "+start);
+         System.out.println("***end : "+end);
+         System.out.println("***startPage : "+startPage);
+         System.out.println("***endPage : "+endPage);
+         System.out.println("***totalPage : "+totalPage);
+         
+      
+         
+         
+         model.addAttribute("list", dao.findAll(map));
+         model.addAttribute("totalCount", totalCount);
+         model.addAttribute("totalPage", totalPage);
+         model.addAttribute("startPage", startPage);
+         model.addAttribute("endPage", endPage);
+//         model.addAttribute("start", start);
+//         model.addAttribute("end", end);
+         model.addAttribute("pageNUM", pageNUM);
+         
+         if(search != null) {
+            session.setAttribute("search", search);
+            session.setAttribute("option", option);
+         }
+         
+         //navπŸø° ~¥‘ «œ±‚¿ß«— ƒ⁄µÂ
+//         model.addAttribute("cust_name",c_dao.findByCust_No((int)session.getAttribute("cust_no")).getName());
+         
+      
+      }
+      
+   
+   
+      //ªÛºº∫∏±‚ + ¥Ò±€
+      @RequestMapping("/QnaDetail.do")
+      public void detail(HttpServletRequest request, Model model) {
+         int p_id = 0;
+         
+         if(request.getParameter("p_id")!=null) {
+            p_id = Integer.parseInt(request.getParameter("p_id"));
+         }
+         System.out.println(p_id);
+         
+         updateHit = dao.updateHit(p_id);
+         
+         HashMap map = new HashMap();
+         map.put("p_id", p_id);
+         
+         model.addAttribute("qna", dao.getQna(p_id));
+         model.addAttribute("listReply",re_dao.findAll(map));
+      
+         //∑Œ±◊¿Œµ» »∏ø¯π¯»£ πﬁæ∆ø¿±‚
+         HttpSession session=request.getSession(); 
+         session.setAttribute("cust_no", session.getAttribute("cust_no"));
+      }
+   
+      
+   
+      //ªı±€ ¿€º∫
+      @RequestMapping(value="/QnaInsert.do", method = RequestMethod.GET)
+      public void insertForm(Model model, String nickname, int cust_no , PostVO post) {
+          nextId=dao.getNextId();
+         post.setP_id(nextId);
+         nextNo=dao.getNextNo();
+         post.setP_no(nextNo);
+         
+         model.addAttribute("p_id", nextId);
+         model.addAttribute("p_no", nextNo);
+         model.addAttribute("c", c_dao.findByCust_No(cust_no));
+      }
+      @RequestMapping(value="/QnaInsert.do", method = RequestMethod.POST)
+      public ModelAndView insertSubmit(PostVO pvo,int cust_no, int p_id, int p_no, String p_title,String p_content, HttpServletRequest request) {
+         
+          String path=request.getRealPath("img");
+         System.out.println("path : "+path);
+         
+         MultipartFile uploadFile = pvo.getUploadFile();
+         String fname = uploadFile.getOriginalFilename();
+         
+         if(fname != null && !fname.equals("")) {
+            try {
+               byte[] data = uploadFile.getBytes();
+               FileOutputStream fos = new FileOutputStream(path + "/" + fname);
+               fos.write(data);
+               fos.close();
+            }catch (Exception e) {
+               System.out.println("øπø‹πﬂª˝ : " + e.getMessage());
+            }
+            pvo.setFname(fname);
+           } else{
+              pvo.setFname("");
+           }
+         
+         
+         
+         String p_writer = c_dao.findByCust_No(cust_no).getNickname();
+         int p_hit=0;
+         
+         HashMap map=new HashMap();
+         map.put("p_id", p_id);
+         map.put("p_no", p_no);
+         map.put("cust_no", cust_no);
+         map.put("p_title", p_title);
+         map.put("p_writer", p_writer);
+         map.put("p_content", p_content);
+         map.put("p_hit", p_hit);
+         map.put("fname", fname);
+         
+         ModelAndView mav = new ModelAndView("redirect:/QnaList.do?option=p_title&search=");
+         int re=dao.insert(map);   
+           if(re<=0) {
+              mav.addObject("msg", "∞‘Ω√±€ ¿€º∫ Ω«∆–");
+              mav.setViewName("error");
+           }
+           
+           return mav;
+      }
+      
+      //∞‘Ω√±€ ºˆ¡§
+      @RequestMapping(value="QnaUpdate.do", method = RequestMethod.GET)
+      public void update(int p_id, int cust_no, String nickname, Model model) {
+         HashMap map = new HashMap();
+         map.put("p_id", p_id);
+         map.put("cust_no", cust_no);
+            
+         model.addAttribute("c", c_dao.findByCust_No(cust_no));
+         model.addAttribute("qna", dao.getQna(p_id));
+      }
+      @RequestMapping(value="QnaUpdate.do", method = RequestMethod.POST)
+      public ModelAndView update(HttpServletRequest request, PostVO m, MultipartFile uploadFile) {
+        
+            String path = request.getRealPath("img");
+         System.out.println("path: "+path);
+         String oldFname = m.getFname();
+         String fname = uploadFile.getOriginalFilename();
+         if(fname != null && !fname.equals("")) {
+            m.setFname(fname);
+            try {
+               byte[] data = uploadFile.getBytes();
+               FileOutputStream fos = new FileOutputStream(path + "/" + fname);
+               fos.write(data);
+               fos.close();
+            }catch (Exception e) {
+               System.out.println("øπø‹πﬂª˝ updateCustomer : " + e.getMessage());
+            }
+            m.setFname(fname);
+           } else{
+              m.setFname(oldFname);
+           }  
+         
+         ModelAndView mav=new ModelAndView("redirect:/QnaDetail.do?p_id="+m.getP_id());
+         int re = dao.update(m);
+         if(re<=0) {
+            mav.addObject("msg", "∞‘Ω√±€ ºˆ¡§ Ω«∆–");
+            mav.setViewName("error");
+         }else {
+            if(fname != null && !fname.equals("") && !m.getFname().equals("")) {
+               File file = new File(path + "/" + oldFname);
+                                       // oldFname¿∏∑Œ ∫Ø∞Ê
+               file.delete();
+            }
+          }
+         return mav;
+      }      
+      
+       //∞‘Ω√±€ ªË¡¶
+       @RequestMapping(value = "QnaDelete.do", method = RequestMethod.POST)
+      @ResponseBody
+      public int delete(int p_id, int cust_no) {
+         int re=-1;
+            
+         System.out.println("::::::::::::"+p_id);
+         System.out.println("::::::::::::"+cust_no);
+         HashMap map=new HashMap();
+         map.put("p_id",p_id);
+         map.put("cust_no",cust_no);
+         
+         re=dao.delete(map);
 
-			HashMap map=new HashMap();
-			map.put("p_id",p_id);
-			map.put("cust_no",cust_no);
-			
-			re=dao.delete(map);
+         return re;
+      }
 
-			return re;
-		}
+   
 }

@@ -53,8 +53,10 @@
 	
 	<!-- 게시글 삭제 -->
 	<delete id="delete">
-		delete post where p_id=#{p_id} and cust_no=#{cust_no}
-		<if test="cust_no=1">
+		<if test="cust_no != 1">
+			delete post where p_id=#{p_id} and cust_no=#{cust_no}
+		</if>
+		<if test="cust_no == 1">
 			delete post where p_id=#{p_id}
 		</if>
 	</delete>
