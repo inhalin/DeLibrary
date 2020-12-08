@@ -26,8 +26,8 @@ import lombok.Setter;
 
 @Controller
 public class PostController {
-   public static int pageSIZE=3;
-   public static int pageMAX =5;      //한 페이지에서 페이징바 수
+   public static int pageSIZE=5;
+   public static int pageMAX =5;      //�븳 �럹�씠吏��뿉�꽌 �럹�씠吏뺣컮 �닔
    public static int totalCount=0;   
    public static int totalPage=0;
    public static int updateHit=0;
@@ -46,7 +46,7 @@ public class PostController {
    @Setter
    private CustomerDAO c_dao;
    
-   //전체 게시글 목록
+   //�쟾泥� 寃뚯떆湲� 紐⑸줉
    @RequestMapping("postList.do")
    public void postList(Model model, int group, @RequestParam(value = "pageNUM", defaultValue = "1") int pageNUM, String search, String option, HttpSession session, HttpServletRequest request) {
       System.out.println("***pageNUM : "+   pageNUM);
@@ -69,14 +69,14 @@ public class PostController {
       totalCount = dao.getTotalCount(map);
       totalPage = (int)Math.ceil( (double)totalCount/pageSIZE ) ;
       
-      //페이지 버튼 숫자
+      //�럹�씠吏� 踰꾪듉 �닽�옄
         int startPage = (pageNUM-1)/pageMAX*pageMAX+1;
         int endPage = startPage+pageMAX-1;
         if(endPage>totalPage) {
            endPage = totalPage;
         }
 
-      //페이지에 출력되는 레코드 번호
+      //�럹�씠吏��뿉 異쒕젰�릺�뒗 �젅肄붾뱶 踰덊샇
       int start = (pageNUM-1)*pageSIZE + 1;
       int end = start + pageSIZE-1;
       if(end > totalCount) {
@@ -99,7 +99,7 @@ public class PostController {
       model.addAttribute("endPage", endPage);
       model.addAttribute("pageNUM", pageNUM);
       
-      //검색어 입력하면 세션에 실어준다.
+      //寃��깋�뼱 �엯�젰�븯硫� �꽭�뀡�뿉 �떎�뼱以��떎.
       if(search!=null && !search.equals("")) {
          session.setAttribute("search", search);
          session.setAttribute("option", option);
@@ -109,8 +109,8 @@ public class PostController {
       }
    }
 
-   //게시글 상세보기
-   //전체 댓글목록
+   //寃뚯떆湲� �긽�꽭蹂닿린
+   //�쟾泥� �뙎湲�紐⑸줉
    @RequestMapping("postDetail.do")
    public void detail(int p_id, int group, Model model, HttpServletRequest request) {
       updateHit=dao.updateHit(p_id);
@@ -119,22 +119,22 @@ public class PostController {
       map.put("p_id", p_id);
       map.put("group", group);
   
-      System.out.println("DETAIL 상세글 p_id  |  "+p_id);
-      System.out.println("DETAIL 상세글 p_no  |  "+dao.findById(map).getP_no());
-      System.out.println("DETAIL 상세글 cust_no |  "+dao.findById(map).getCust_no());
+      System.out.println("DETAIL �긽�꽭湲� p_id  |  "+p_id);
+      System.out.println("DETAIL �긽�꽭湲� p_no  |  "+dao.findById(map).getP_no());
+      System.out.println("DETAIL �긽�꽭湲� cust_no |  "+dao.findById(map).getCust_no());
   
       model.addAttribute("post",dao.findById(map));
       model.addAttribute("group", group);
       model.addAttribute("listReply",re_dao.findAll(map));
       
-      //로그인된 회원번호 받아오기
+      //濡쒓렇�씤�맂 �쉶�썝踰덊샇 諛쏆븘�삤湲�
       HttpSession session=request.getSession(); 
       session.setAttribute("cust_no", session.getAttribute("cust_no"));
-      System.out.println("로그인된 회원번호  |  "+session.getAttribute("cust_no"));
+      System.out.println("濡쒓렇�씤�맂 �쉶�썝踰덊샇  |  "+session.getAttribute("cust_no"));
       
    }
    
-   //새글 작성
+   //�깉湲� �옉�꽦
    @RequestMapping(value="postInsert.do", method = RequestMethod.GET)
    public void insertForm(Model model, int cust_no, String nickname, int group, PostVO post, HttpServletRequest request) {
       nextId=dao.getNextId(group);
@@ -142,8 +142,8 @@ public class PostController {
       nextNo=dao.getNextNo(group);
       post.setP_no(nextNo);
             
-      System.out.println("다음 글 id : "+nextId);
-      System.out.println("다음 글 no : "+nextNo);
+      System.out.println("�떎�쓬 湲� id : "+nextId);
+      System.out.println("�떎�쓬 湲� no : "+nextNo);
       System.out.println("group : "+group);
       System.out.println("cust_no : "+c_dao.findByCust_No(cust_no).getCust_no());
       model.addAttribute("p_id", nextId);
@@ -154,7 +154,7 @@ public class PostController {
    @RequestMapping(value="postInsert.do", method = RequestMethod.POST)
    public ModelAndView insertSubmit(PostVO pvo, int group,int cust_no, int p_id, int p_no, String p_title,String p_content, HttpServletRequest request) {
       
-      System.out.println("동작!!");
+      System.out.println("�룞�옉!!");
       
       String path=request.getRealPath("img");
       System.out.println("path : "+path);
@@ -172,7 +172,7 @@ public class PostController {
             fos.write(data);
             fos.close();
          }catch (Exception e) {
-            System.out.println("예외발생 : " + e.getMessage());
+            System.out.println("�삁�쇅諛쒖깮 : " + e.getMessage());
          }
          pvo.setFname(fname);
         } else{
@@ -181,7 +181,7 @@ public class PostController {
 //      pvo.setFname(fname);
       
       
-      //글머리 option값 받아오기
+      //湲�癒몃━ option媛� 諛쏆븘�삤湲�
       System.out.println(request.getParameter("p_option"));
       String p_option=request.getParameter("p_option");
       
@@ -205,13 +205,13 @@ public class PostController {
       ModelAndView mav=new ModelAndView("redirect:/postList.do?option=p_title&search=&group="+group);
       int re=dao.insert(map);
       if(re<=0) {
-         mav.addObject("msg", "게시글이 정상적으로 등록되지 않았습니다.");
+         mav.addObject("msg", "寃뚯떆湲��씠 �젙�긽�쟻�쑝濡� �벑濡앸릺吏� �븡�븯�뒿�땲�떎.");
          mav.setViewName("error");
       }
       return mav;
    }
    
-   //게시글 수정
+   //寃뚯떆湲� �닔�젙
    @RequestMapping(value="postUpdate.do", method = RequestMethod.GET)
    public void update(int group, int p_id, int cust_no, String nickname, Model model) {
       System.out.println("group  :  "+group);
@@ -222,8 +222,8 @@ public class PostController {
       map.put("cust_no", cust_no);
       
       
-      System.out.println("글등록자 회원번호 : "+dao.findById(map).getCust_no());
-      System.out.println("로그인된 회원번호 : "+c_dao.findByCust_No(cust_no).getCust_no());
+      System.out.println("湲��벑濡앹옄 �쉶�썝踰덊샇 : "+dao.findById(map).getCust_no());
+      System.out.println("濡쒓렇�씤�맂 �쉶�썝踰덊샇 : "+c_dao.findByCust_No(cust_no).getCust_no());
          
       model.addAttribute("group", group);
       model.addAttribute("c", c_dao.findByCust_No(cust_no));
@@ -247,42 +247,42 @@ public class PostController {
             fos.write(data);
             fos.close();
          }catch (Exception e) {
-            System.out.println("예외발생 : " + e.getMessage());
+            System.out.println("�삁�쇅諛쒖깮 : " + e.getMessage());
          }
          pvo.setFname(fname);
         } else{
-           // oldFname set으로 추가
+           // oldFname set�쑝濡� 異붽�
            pvo.setFname(oldFname);
         }
       
-      //글머리 option값 받아오기
-      System.out.println("내글수정 페이지 글머리 : "+request.getParameter("p_option"));
+      //湲�癒몃━ option媛� 諛쏆븘�삤湲�
+      System.out.println("�궡湲��닔�젙 �럹�씠吏� 湲�癒몃━ : "+request.getParameter("p_option"));
       String p_option=request.getParameter("p_option");
       pvo.setP_option(p_option);
       
       ModelAndView mav=new ModelAndView("redirect:/postDetail.do?p_id="+pvo.getP_id()+"&&group="+group);
       int re = dao.update(pvo);
       if(re<=0) {
-         mav.addObject("msg", "게시글이 정상적으로 수정되지 않았습니다.");
+         mav.addObject("msg", "寃뚯떆湲��씠 �젙�긽�쟻�쑝濡� �닔�젙�릺吏� �븡�븯�뒿�땲�떎.");
          mav.setViewName("error");
         }else {
          if(fname != null && !fname.equals("") && !pvo.getFname().equals("")) {
             File file = new File(path + "/" + oldFname);
-                                    // oldFname으로 변경
+                                    // oldFname�쑝濡� 蹂�寃�
             file.delete();
          }
         }
         return mav;
    }
    
-   //게시글 삭제
+   //寃뚯떆湲� �궘�젣
    @RequestMapping(value = "postDelete.do", method = RequestMethod.POST)
    @ResponseBody
    public String delete(int p_id, int cust_no, int group, HttpServletRequest request) {
       int re=-1;
             
-      System.out.println("DEL 받아온 cust_no :  "+cust_no);
-      System.out.println("DEL 받아온 p_id  :  "+p_id);
+      System.out.println("DEL 諛쏆븘�삩 cust_no :  "+cust_no);
+      System.out.println("DEL 諛쏆븘�삩 p_id  :  "+p_id);
       
       
       HashMap map=new HashMap();
