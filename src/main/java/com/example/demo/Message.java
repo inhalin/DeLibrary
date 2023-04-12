@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Message {
+	
 
+	public Message(String result) {
+		super();
+		this.result = result;
+	}
 
-    public Message(String result) {
-        super();
-        this.result = result;
-    }
-
-    private String result;
+	private String result;
 }

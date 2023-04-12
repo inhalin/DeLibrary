@@ -26,7 +26,7 @@
 
 <!-- 외부 CSS, JS 파일 링크 -->
 <link rel="stylesheet" href="css/HomeCSS.css">
-<script type="text/javascript" src="/js/home.js"></script>
+<script type="text/javascript" src="/js/HomeJS.js"></script>
 
 <script type="text/javascript">
 	window.onload = function() {
